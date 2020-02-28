@@ -1,0 +1,118 @@
+---
+title: "Primer_html"
+author: "Juan M Martin"
+date: "25 de febrero de 2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+```{r, eval=FALSE}
+library(pressure)
+summary(pressure)
+```
+
+## Including Plots
+
+```{r, echo=FALSE, fig.cap= "Figura 1"}
+plot(pressure)
+par(mfrow = c(1,2))
+plot(pressure, cex = 3, pch = 11, col="red")
+plot(pressure, cex = 0.5, pch = 8, col="red")
+```
+
++ *fig.with* y *fig.height*: especificamos el tamaño. También se especifica con *fig.dim* = c(6,4) sera 6 de alto y 4 de ancho.
+
+
++ *out.with* y *out.height*: tamaño escalado de salida.
+
++ *fig.align*: centrado 
+
++ *fig.cap*: pie de figura 
+
+## Tablas con RMD
+
+La peor tabla de mundo
+
+Columna1  | Columna2
+------------- | -------------
+65  | Juan
+778  | Hey
+
+<!---Flex tables para tablas bonitas--->
+
+```{r, eval=TRUE,echo=FALSE,message=FALSE,include=TRUE}
+library(flextable) # estilo tablas
+library(officer) # estilo tablas
+library(tidyverse) # para manejo de datos libreria fundamental de R
+
+str(iris)
+names(iris)
+iris_tidy <- iris %>%
+  mutate_if(is.numeric, round, digits = 1)
+str(iris_tidy)
+
+## creamos la tabla en un documento a parte ####
+
+doc <- read_docx()
+iris_sel2 <- iris_tidy %>%
+  rename("sepal length" = Sepal.Length,
+         "petal width" = Petal.Length)
+# la tabla
+
+ftable <- flextable(iris_sel2)
+ftable <- align(ftable, align = "center", part = "header")
+ftable <- align(ftable, align = "center", part = "body")
+ftable <- colformat_num(ftable, col_keys = c("sepal length", "petal width"), digits = 0)
+
+doc <- body_add_flextable(doc, value = ftable)
+print(doc, target = "mipritabla.docx")
+
+library(plyr)
+
+dataframe <- ftable
+ftable2 <- ddply(ftable, summarize, mean)
+
+
+data <- ddply(iris,.(Species), summarize, mean.sepal = mean(Sepal.Length), sd.sepal = sd(Sepal.Length))
+
+doc2 <- read_docx()
+
+# la tabla
+
+ftable2 <- flextable(data)
+ftable2 <- align(ftable2, align = "center", part = "header")
+ftable2 <- align(ftable2, align = "center", part = "body")
+ftable2 <- colformat_num(ftable2, col_keys = c("mean.sepal", "sd.sepal"), digits = 0)
+
+doc2 <- body_add_flextable(doc2, value = ftable2)
+print(doc2, target = "mipritabla2.docx")
+
+```
+
+
+
+
+

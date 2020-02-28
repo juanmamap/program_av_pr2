@@ -238,3 +238,4 @@ largo <- c("a","b","c","d","e","f","g","h","i")
 corto <- c("a","b","c")
 
 largo %in% corto
+
